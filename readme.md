@@ -1,16 +1,21 @@
 # **RACTF 2020**
 
-![](assets//images//logo.png#center)
+<p align="center">
+<img  width="170" height="170" src="assets//images//logo.png">
+</p>
 
 RACTF is a student-run, extensible, open-source, capture-the-flag event.
 
 In more human terms, we run a set of cyber-security challenges, of many different varieties, with many difficulty levels, for the sole purposes of having fun and learning new skills.
 
+This is the ninth CTF I participated in and by far the best one, the challenges were great, funny and not too guessy, the framework was really good and stable (in other words not CTFd), and the CTF team were friendly and helpful.\
+In the end I finished most of the crypto, misc, osint and web challenges (I will add more when I'll have time) and ended up around 100th in the leaderboard (I played solo so it's not too shaby), this is my second writeup and hopefully more will come, if you have any comments, questions, or found any error (which I'm sure there are plenty of) please let me know. Thanks for reading!
+
 ***
 # Table of Contents
 * [Miscellaneous](#Miscellaneous)
   - [Discord](#discord)
-  - [Spentalkux](#apentalkux)
+  - [Spentalkux](#spentalkux)
   - [pearl pearl pearl](#pearl-pearl-pearl)
   - [Reading Beetwen the Lines](#reading-between-the-lines)
   - [Mad CTF Disease](#mad-ctf-disease)
@@ -72,7 +77,7 @@ I think I needed to import the package and run it but oh well we still got the m
 ```
 Hello, If you're reading this you've managed to find my little... *interface*. The next stage of the challenge is over at https://pastebin.com/raw/BCiT0sp6
 ```
-We got ourself a decrpyted message. In the messege is a url to a data hosted on pastebin, if you look at the site you'll see that the data consists of numbers from 1 to 9 and some uppercase letters, only from A to F (I will not copy it here beacuse it's massive), I assumed that it was an hex encoding of something and by the sheer size of it I also infered that it is a file, so I used my favorite hex editor HxD and created a new file with the hex value given and it turns out to be an png image file (you can check things like that using the file command in linux), the image is:
+We got ourself a decrpyted message. In the messege is a url to a data hosted on pastebin, if you look at the site you'll see that the data consists of numbers from 1 to 9 and some uppercase letters, only from A to F (I will not show it here beacuse it's massive), I assumed that it was an hex encoding of something and by the sheer size of it I also infered that it is a file, so I used my favorite hex editor HxD and created a new file with the hex value given and it turns out to be an png image file (you can check things like that using the file command in linux), the image is:
 
 ![](assets//images//spentalkux_2.png)
 
@@ -198,10 +203,10 @@ now really why did they make this challenges so simillar? even changing the data
 
 ## Mad CTF Disease
 Todo:
-[x] Be a cow
-[x] Eat grass
-[x] Eat grass
-[x] Eat grass
+[x] Be a cow\
+[x] Eat grass\
+[x] Eat grass\
+[x] Eat grass\
 [ ] Find the flag
 
 [cow.jpg](https://files.ractf.co.uk/challenges/60/cow.jpg)
@@ -210,13 +215,15 @@ Todo:
 
 **Solution:** Now to change things up we got ourselves a stego-but-not-in-stego type of challenge, with the challenge we get this nice JPEG image data file:
 
-![](https://files.ractf.co.uk/challenges/60/cow.jpg)
+<p align="center">
+  <img src="https://files.ractf.co.uk/challenges/60/cow.jpg">
+</p>
 
 First thing I do when faced with images is to check using binwalk if there are embedded files in the images, as expected binwalk finds nothing in this image, afterwards I check using steghide also for embedded files, It supposed to do a better job but I mostly use it by habit because binwalk almost always finds the same files and...
 
 ![!?!?](assets//images//mad_CTF_disease_1.jpg)
 
-wait...did steghide actually found a file!? if we take a look at the file steghide (!) found we see a really bizzare text constructed only by moo's:
+...wait...did steghide actually found a file!? if we take a look at the file steghide (!) found we see a really bizzare text constructed only by moo's:
 ```
 OOOMoOMoOMoOMoOMoOMoOMoOMoOMMMmoOMMMMMMmoOMMMMOOMOomOoMoOmoOmoomOo
 MMMmoOMMMMMMmoOMMMMOOMOomOoMoOmoOmoomOoMMMmoOMMMMMMmoOMMMMOOMOomOo
@@ -278,6 +285,105 @@ and we got our cow-scented flag.
 * COW programming language: https://esolangs.org/wiki/COW
 * COW interpreter: http://www.frank-buss.de/cow.html
 
+
+## Teleport
+One of our admins plays a strange game which can be accessed over TCP. He's been playing for a while but can't get the flag! See if you can help him out.
+
+[teleport.py](https://files.ractf.co.uk/challenges/47/teleport.py)
+
+**ractf{fl0at1ng_p01nt_15_h4rd}**
+
+**Solution:** With the challenge we are given the following script in python 3:
+```python 3
+import math
+
+x = 0.0
+z = 0.0
+flag_x = 10000000000000.0
+flag_z = 10000000000000.0
+print("Your player is at 0,0")
+print("The flag is at 10000000000000, 10000000000000")
+print("Enter your next position in the form x,y")
+print("You can move a maximum of 10 metres at a time")
+for _ in range(100):
+    print(f"Current position: {x}, {z}")
+    try:
+        move = input("Enter next position(maximum distance of 10): ").split(",")
+        new_x = float(move[0])
+        new_z = float(move[1])
+    except Exception:
+        continue
+    diff_x = new_x - x
+    diff_z = new_z - z
+    dist = math.sqrt(diff_x ** 2 + diff_z ** 2)
+    if dist > 10:
+        print("You moved too far")
+    else:
+        x = new_x
+        z = new_z
+    if x == 10000000000000 and z == 10000000000000:
+        print("ractf{#####################}")
+        break
+```
+And a server to connect which runs the same script with the flag uncensored:
+
+![](assets//images//teleport_1.png)
+
+This is the last challenge I solved in the misc. category and admittedly the challenge I spent most of my time on in the CTF.\
+When I first started working on it I tried writing a script which connect to the server and moves the player to the needed position, I quickly found out that there is a for loop with a range limited enough that you can't just move the player to that position 10 meters at a time. Then I tried looking for ways to make the script evaluate commands so that I can change the value of the player position or read the file from outside but those didn't work, after a while of trying everything I can and literally slamming my hand on the keyboard hoping something will work I noticed that in python 3 the input function return the string given simillar to how raw_input worked in python 2, so the float function in the code gets a string as an input and returns a float value but how does it work, and more importantly which strings does it accepts and how they are parsed, after a google search I found in a stackoverflow question (linked below) the following table:
+
+```
+val                   is_float(val) Note
+--------------------  ----------   --------------------------------
+""                    False        Blank string
+"127"                 True         Passed string
+True                  True         Pure sweet Truth
+"True"                False        Vile contemptible lie
+False                 True         So false it becomes true
+"123.456"             True         Decimal
+"      -127    "      True         Spaces trimmed
+"\t\n12\r\n"          True         whitespace ignored
+"NaN"                 True         Not a number
+"NaNanananaBATMAN"    False        I am Batman
+"-iNF"                True         Negative infinity
+"123.E4"              True         Exponential notation
+".1"                  True         mantissa only
+"1,234"               False        Commas gtfo
+u'\x30'               True         Unicode is fine.
+"NULL"                False        Null is not special
+0x3fade               True         Hexadecimal
+"6e7777777777777"     True         Shrunk to infinity
+"1.797693e+308"       True         This is max value
+"infinity"            True         Same as inf
+"infinityandBEYOND"   False        Extra characters wreck it
+"12.34.56"            False        Only one dot allowed
+u'四'                 False        Japanese '4' is not a float.
+"#56"                 False        Pound sign
+"56%"                 False        Percent of what?
+"0E0"                 True         Exponential, move dot 0 places
+0**0                  True         0___0  Exponentiation
+"-5e-5"               True         Raise to a negative number
+"+1e1"                True         Plus is OK with exponent
+"+1e1^5"              False        Fancy exponent not interpreted
+"+1e1.3"              False        No decimals in exponent
+"-+1"                 False        Make up your mind
+"(1)"                 False        Parenthesis is bad
+```
+which nost importantly tells us that we can give as an argument the string "NaN" and the function will return the value nan.\
+nan, which stands for not a number, is used in floating point arithmetic to specify that the value is undefined or unrepresentable (such with the case of zero divided by zero), this value is great for us because any arithmetic operation done on nan will results with the value of nan, and for any value x the comperison nan > x is alway false, so if we give as inputs nan to the script will get that the value of the variable dist is nan and so the comparison of dist > 10 will be false and our values of x and z will be assigned with nan, in the next round we can simply give the server any value we want and because x and z are nan will still get that dist is nan, when we try this on the server we get the following:
+
+![](assets//images//teleport_2.png)
+
+Looks like it works! now all we need is to try it on the target position:
+
+![](assets//images//teleport_3.png)
+
+and we have the flag.
+
+**Resources:**
+* https://stackoverflow.com/questions/379906/how-do-i-parse-a-string-to-a-float-or-int
+
+
 ***
 # Cryptography
 
@@ -290,7 +396,7 @@ We found a strange service running over TCP (my my, there do seem to be a lot of
 
 ![](assets//images//really_simple_algorithm_1.png)
 
-By the name of the challenge and the given parameter we can guess that we have a ciphertext (ct) that we need to decrypt using RSA, without going to details about the inner workings of this cipher RSA is a public key cipher, which means that there are two keys, one that is public which is used to encrypt data, and one that is private which is used to decrpyt data, obviously there is some sort of connection between the keys but it is hard to reveal the private key from the public keys (and in this case vice versa), specificly in RSA in order to find the private key we need to solve the integer factorazition problem, which is thought to be in NP/P (this is not important for the challenge), we will call our public key e and our private key d, they posses the following attribute - d multiply by e modulo the value of (p-1) * (q-1) which we will name from now phi, is equal to 1, we will call d the modular multiplicative inverse of e and e the modular multiplicative inverse of d, futhermore if we take a plaintext message pt and raise it to the power of d and then to the power of e modulo the value of p * q, which we will name n and will be commonly given to us insted of q and p, we will get pt again (to understand why it is needed to delve into modern algebra, if n is smaller to pt then obviously we will not get pt), now with that in mind we can talk about the cipher, encrpytion in this cipher is raising the plaintext pt to the power of the public key e mod the value of n, simillarly, decryption is raising the ciphertext to the power of d mod n, quick summary:
+By the name of the challenge and the given parameters we can guess that we have a ciphertext (ct) that we need to decrypt using RSA, without going to details about the inner workings of this cipher RSA is a public key cipher, which means that there are two keys, one that is public which is used to encrypt data, and one that is private which is used to decrpyt data, obviously there is some sort of connection between the keys but it is hard to reveal the private key from the public keys (and in this case vice versa), specificly in RSA in order to find the private key we need to solve the integer factorazition problem, which is thought to be in NP/P (this is not important for the challenge), we will call our public key e and our private key d, they posses the following attribute - d multiply by e modulo the value of (p-1) * (q-1) which we will name from now phi, is equal to 1, we will call d the modular multiplicative inverse of e and e the modular multiplicative inverse of d, futhermore if we take a plaintext message pt and raise it to the power of d and then to the power of e modulo the value of p * q, which we will name n and will be commonly given to us insted of q and p, we will get pt again (to understand why it is needed to delve into modern algebra, if n is smaller to pt then obviously we will not get pt), now with that in mind we can talk about the cipher, encrpytion in this cipher is raising the plaintext pt to the power of the public key e mod the value of n, simillarly, decryption is raising the ciphertext to the power of d mod n, quick summary:
 
 ![](assets//images//really_simple_algorithm_2.png)
 
@@ -436,8 +542,128 @@ host = '88.198.219.20'
 port = 23125
 connect()
 ```
-as you can see all the challenges are like we've seen in previous challenges, I used pwntools' remote module instead of sockets as was commended by the CTF teams beacuse I am more accustomed to it, by running the code we get:
+as you can see all the challenges are like we've seen in previous challenges, I used pwntools' remote module instead of sockets as was recommended by the CTF teams beacuse I am more accustomed to it, by running the code we get:
 
 ![](assets//images//really_speedy_algorithm_2.png)
 
 and we have our lighting-fast flag.
+
+## B007l3G CRYP70
+While doing a pentest of a company called MEGACORP's network, you find these numbers laying around on an FTP server:
+41 36 37 27 35 38 55 30 40 47 35 34 43 35 29 32 38 37 33 45 39 30 36 27 32 35 36 52 72 54 39 42 30 30 58 27 37 44 72 47 28 46 45 41 48 39 27 27 53 64 32 58 43 23 37 44 32 37 28 50 37 19 51 53 30 41 18 45 79 46 40 42 32 32 46 28 37 30 43 31 26 56 37 41 61 68 44 34 26 24 48 38 50 37 27 31 30 38 34 58 54 39 30 33 38 18 33 52 34 36 31 33 28 36 34 45 55 60 37 48 57 55 35 60 22 36 38 34. Through further analysis of the network, you also find a network service running. Can you piece this information together to find the flag?
+
+**ractf{d0n7_r0ll_y0ur_0wn_cryp70}**
+
+**Solution:** With the challenge we are given a server to connect to, when we connect we get the following:
+
+![](assets//images//booring_crypto.png)
+
+I played for a while with the encryption and noticed three things, the first is that the ciphertext, which consists of 4 \* n numbers where n is the number of letters in the cipher text, changes even though the plaintext remains the same, which means that the specific numbers returned are of no importance to the decryption. The second thing and the most important thing is that the *sum* of the numbers is constant for every plaintext given, and when the message consists of one letter letter only the sum is equal to 255 minus the ascii order of the character, or equivalently the inverse of the order of the character in binary. The third thing is that appending two messeges results with a ciphertext twice the size, where the sum remains consistent with the previous attribue I mentioned, an example of this:
+
+![](assets//images//booring_crypto_1.png)
+
+So with that in mind I wrote the following code which reads splits the ciphertext given with the challenge to numbers, sums every four succeeding number and find the inverse of the sum and the character with this ascii encoding:
+```python 3
+import re
+
+cipher = "41 36 37 27 35 38 55 30 40 47 35 34 43 35 29 32 38 37 33 45 39 30 36 27 32 35 36 52 72 54 39 42 30 30 58 27 37 44 72 47 28 46 45 41 48 39 27 27 53 64 32 58 43 23 37 44 32 37 28 50 37 19 51 53 30 41 18 45 79 46 40 42 32 32 46 28 37 30 43 31 26 56 37 41 61 68 44 34 26 24 48 38 50 37 27 31 30 38 34 58 54 39 30 33 38 18 33 52 34 36 31 33 28 36 34 45 55 60 37 48 57 55 35 60 22 36 38 34"
+numbers = re.findall("[0-9]+",cipher)
+for i in range(0,len(numbers),4):
+	value = 255 - sum([int(a) for a in numbers[i:i+4]])
+	print(chr(value), end='')
+print("")
+```
+by running it we get:
+
+![](assets//images//booring_crypto_2.png)
+
+and we found our flag.
+
+***
+
+# Steg / Forensics
+
+## Cut short
+This image refuses to open in anything, which is a bit odd. Open it for the flag!
+
+[flag.png](https://files.ractf.co.uk/challenges/73/flag.png)
+
+**ractf{1m4ge_t4mp3r1ng_ftw}**
+
+**Solution:** With the challenge we are given a PNG image data which seems to be corrupted because it seems we can't view it, so we need to find a way to fix the image. Fortunately, the format of PNG image is quite easy to understand, the file mostly consists of the png file signature, the first 8 bytes of the file which are the same across all PNG images and  are used to detect the file as an PNG image, an IHDR chunk which specify the dimension of the image and a few other things, a lot of IDAT chunks which contains the actual compressed image data and in the end an IEND chunk which specify the end of the image, each chunks starts with the chunk size and end with the chunk crc32 code which helps detect data corruption in the chunk (we'll get to that next challenge), now if we look at the given image with an hex editor (I used HxD) we see the following:
+
+![](assets//images//cut_short_1.png)
+
+We can see that there is an IEND chunk at the start of the image right after the file signature, which is wrong and makes image viewers neglect all the preceeding data after it, so we can delete this chunk, it starts in the eighth byte and ends in the 19th byte, after deleting this chunk we can try viewing and the image again, by doing that we get:
+
+<p align="center">
+  <img src="assets//images//cut_short_2.png">
+</p>
+
+and we have our flag.
+
+**Resources:**
+* PNG format specification (long version): https://www.w3.org/TR/2003/REC-PNG-20031110/
+* PNG format specification (short version): http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html
+* HxD: https://mh-nexus.de/en/hxd/
+
+## Dimensionless Loading
+
+This PNG looks to be valid, but when we open it up nothing loads. Any ideas?
+
+**ractf{m1ss1ng_n0_1s_r34l!!}**
+
+[flag.png](https://files.ractf.co.uk/challenges/72/flag.png)
+
+**Solution:** With get a PNG image with the challenge, and again it seems we can view it, so it is too corrupted, if we view the file in hex editor we see the following
+
+![](assets//images//dimension_loading_1.png)
+
+ I explained in the previous challenge the PNG image layout, whats important in our case is the IHDR chunk, this chunk is the first to appear in a file right after the file signature and specify the dimension of the image and other metadata the image viewers can use to show the image, in the specification of the PNG file format we can see:
+
+ ![](assets//images//dimension_loading_2.png)
+
+ so we can infer that the width and height of the image are four bytes each an are the first attributes in the chunk, if we look again at the hexdump of the file we can see that this bytes are equal to zero, alternativly, we can use the tool pngcheck on linux and it will return as that the image dimension are invalid with them being 0x0, so we now know our problem but how we can fix it? unfortunatly the image width and height is only stored in the IHDR chunk, so wi'll need to brute force our way, for that we need to talk about crc some more.\
+ As I explained in the previous challenge each chunk is preceeded by a crc code which check the integrity of the chunk, the algorithm itself for calculating the code, which is called Cyclic redundancy check, is not important at the moment but we should keep in mind that it does its job quite well, and that we have a python module zlib implements it, so if we iterate over all the reasonable dimensions for the image, calculate the crc code for the chunk again and compare it to the code stored in the image, which in our case we can see in the hexdump that it is 0x5b8af030, we can hopefully find the correct dimension for the image, so I wrote the following script which roughly does what I described and prints the dimensions that match:
+
+ ``` python 3
+ from zlib import crc32
+
+ data = open("corrupted.png",'rb').read()
+ index = 12
+
+ ihdr = bytearray(data[index:index+17])
+ width_index = 7
+ height_index = 11
+
+ for x in range(1,2000):
+ 	height = bytearray(x.to_bytes(2,'big'))
+ 	for y in range(1,2000):
+ 		width = bytearray(y.to_bytes(2,'big'))
+ 		for i in range(len(height)):
+ 			ihdr[height_index - i] = height[-i -1]
+ 		for i in range(len(width)):
+ 			ihdr[width_index - i] = width[-i -1]
+ 		if hex(crc32(ihdr)) == '0x5b8af030':
+ 			print("width: {} height: {}".format(width.hex(),height.hex()))
+ 	for i in range(len(width)):
+ 			ihdr[width_index - i] = bytearray(b'\x00')[0]
+ ```
+ most of the code is just to because using bytearrays is difficult, running it will give us the following:
+
+ ![](assets//images//dimension_loading_3.png)
+
+we can see that the script found only one match, which is great because the only thing left for us to do is replace the dimension in the image with this dimension and we hopefully done, the hexdump should look now like that (different in the second row):
+
+![](assets//images//dimension_loading_4.png)
+
+By trying to view the image again we get:
+
+![](assets//images//dimension_loading_5.png)
+
+and we got our flag.
+
+**Resources:**
+* PNG format specification (long version): https://www.w3.org/TR/2003/REC-PNG-20031110/
+* PNG format specification (short version): http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html
+* HxD: https://mh-nexus.de/en/hxd/
