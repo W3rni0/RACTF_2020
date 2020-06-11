@@ -60,7 +60,7 @@ aW1wb3J0IHRpbWUKCmdvX2F3YXlfbXNncyA9IFsiR29vZGJ5ZSBub3cuIiwgIlRoYXQncyB5b3VyIGN1
 """
 exec(base64.b64decode(p.encode("ascii")))
 ```
-We can see that this massive block of seemingly random characters is encoded to ascii and then decoded to base64, a type of encoding which uses letter, numbers and symbols to represents a value, so I plugged the block of text to Cyberchef to decode the data and got the following script:
+We can see that this massive block of seemingly random characters is encoded to ascii and then decoded to base64, a type of encoding which uses letter, numbers and symbols to represent a value, so I plugged the block of text to Cyberchef to decode the data and got the following script:
 
 ```python
 import time
@@ -85,11 +85,11 @@ for i in go_away_msgs:
     print(i)
 time.sleep(0.5)
 ```
-I think I needed to import the package to a script and run it but oh well we still got the message, so we are given another unreadable text  which we can assume is a ciphertext with a key of length 10 as the messages suggested, we can infer by the ciphertext that it's a Vigenere cipher beacuse the format of the text and the format of the url in the end suggests that the letters were substituted (and it is common to use Vigenere in CTF so it's an easy assumption), I first attempted to decrypt the url using Cyberchef with the assumption that it's starts with https and got the substring of the key 'ental', and after a bit of trying to get other parts of the url decrpyted I noticed that the key is similar to the name of the package, so I used that as a key et voila:
+I think I needed to import the package to a script and run it but oh well we still got the message, so we are given another unreadable text  which we can assume is a ciphertext with a key of length 10 as the messages suggested, we can infer by the ciphertext that it's a Vigenere cipher beacuse the format of the text and the format of the url in the end suggests that the letters were substituted (and it is common to use Vigenere in CTF so it's an easy assumption), I first attempted to decrypt the url using Cyberchef with the assumption that it starts with https and got the substring of the key 'ental', and after trying to get other parts of the url decrpyted I noticed that the key is similar to the name of the package, so I used that as a key et voila:
 ```
 Hello, If you're reading this you've managed to find my little... *interface*. The next stage of the challenge is over at https://pastebin.com/raw/BCiT0sp6
 ```
-We got ourself the decrpyted message.\ In the messege is a url to some data hosted on pastebin, if you look at the site you'll see that the data consists of numbers from 1 to 9 and some uppercase letters, only from A to F (I will not show it here beacuse it's massive), I assumed that it was an hex encoding of something and by the sheer size of it I inferred that it's also a file, so I used an hex editor and created a new file with the data and it turns out to be an png image file (you can check things like that using the file command in linux), the image is:
+We got ourself the decrpyted message.\ In the messege is a url to some data hosted on pastebin, if you look at the site you'll see that the data consists of numbers from 1 to 9 and some uppercase letters, only from A to F (I will not show it here beacuse it's massive), I assumed that it was an hex encoding of something and by the sheer size of it I gueesed that it's also a file, so I used an hex editor and created a new file with the data and it turns out to be an PNG image file (you can check things like that using the file command in linux), the image is:
 
 ![](assets//images//spentalkux_2.png)
 
@@ -100,7 +100,7 @@ p="""
 aW1wb3J0IHRpbWUKCmdvX2F3YXlfbXNncyA9IFsiVGhpcyBpcyB0aGUgcGFydCB3aGVyZSB5b3UgKmxlYXZlKiwgYnJvLiIsICJMb29rLCBpZiB5b3UgZG9uJ3QgZ2V0IG91dHRhIGhlcmUgc29vbiBpbWEgcnVuIHJtIC1yZiBvbiB5YSIsICJJIGRvbid0IHdhbnQgeW91IGhlcmUuIEdPIEFXQVkuIiwgIkxlYXZlIG1lIGFsb25lIG5vdy4iLCAiR09PREJZRSEiLCAiSSB1c2VkIHRvIHdhbnQgeW91IGRlYWQgYnV0Li4uIiwgIm5vdyBJIG9ubHkgd2FudCB5b3UgZ29uZS4iXQoKdGltZS5zbGVlcCgxKQpwcmludCgiVXJnaC4gTm90IHlvdSBhZ2Fpbi4iKQp0aW1lLnNsZWVwKDIpCnByaW50KCJGaW5lLiBJJ2xsIHRlbGwgeW91IG1vcmUuIikKdGltZS5zbGVlcCgyKQpwcmludCgiLi4uIikKdGltZS5zbGVlcCgyKQpwcmludCgiQnV0LCBiZWluZyB0aGUgY2hhb3RpYyBldmlsIEkgYW0sIEknbSBub3QgZ2l2aW5nIGl0IHRvIHlvdSBpbiBwbGFpbnRleHQuIikKdGltZS5zbGVlcCg0KQpwcmludCgiRW5qb3kgdGhpcy4iKQp0aW1lLnNsZWVwKDEpCnByaW50KCJKQTJIR1NLQkpJNERTWjJXR1JBUzZLWlJMSktWRVlLRkpGQVdTT0NUTk5URkNLWlJGNUhUR1pSWEpWMkVLUVRHSlZUWFVPTFNJTVhXSTJLWU5WRVVDTkxJS041SEszUlRKQkhHSVFUQ001UkhJVlNRR0ozQzZNUkxKUlhYT1RKWUdNM1hPUlNJSk40RlVZVE5JVTRYQVVMR09OR0U2WUxKSlJBVVlPRExPWkVXV05DTklKV1dDTUpYT1ZURVFVTENKRkZFR1dEUEs1SEZVV1NMSTVJRk9RUlZLRldHVTVTWUpGMlZRVDNOTlVZRkdaMk1ORjRFVTVaWUpCSkVHT0NVTUpXWFVOM1lHVlNVUzQzUVBGWUdDV1NJS05MV0UyUllNTkFXUVpES05SVVRFVjJWTk5KREM0M1dHSlNGVTNMWExCVUZVM0NFTlpFV0dRM01HQkRYUzRTR0xBM0dNUzNMSUpDVUVWQ0NPTllTV09MVkxFWkVLWTNWTTRaRkVaUlFQQjJHQ1NUTUpaU0ZTU1RWUEJWRkFPTExNTlNEQ1RDUEs0WFdNVUtZT1JSREM0M0VHTlRGR1ZDSExCREZJNkJUS1ZWR01SMkdQQTNIS1NTSE5KU1VTUUtCSUUiKQp0aW1lLnNsZWVwKDUpCmZvciBpIGluIGdvX2F3YXlfbXNnczoKICAgIHRpbWUuc2xlZXAoMikKICAgIHByaW50KGkpCnRpbWUuc2xlZXAoMC41KQ=="""
 exec(base64.b64decode(p.encode("ascii")))
 ```
-It is again base64 decoded, plugging it to Cyberchef gives us:
+we again have a base64 encoded message, plugging it to Cyberchef gives us:
 
 ```python
 import time
@@ -126,17 +126,17 @@ for i in go_away_msgs:
 time.sleep(0.5)
 ```
 
-And we got another decrypted/decoded code... we can see that it consists only of letters and numbers, in the hope that this isn't some ciphertext I tried using base32 as it only has letters and numbers (and too many letters to be hexadecimal), by doing so we get another code which consists of letters, numbers and symbols so we can safely assume that this is base64, and decoding the data from base64 we get...
+And we got another decrypted/decoded code, we can see that it consists only of letters and numbers, in the hope that this isn't some ciphertext I tried using base32 as it only uses letters and numbers (and too many letters to be hexadecimal), by doing so we get another code which consists of letters, numbers and symbols so we can safely assume that this is base64 again, and decoding the data from base64 we get...
 
 ```
 .....=.^.ÿíYQ.. .¼JGÐû_ÎÝþÌ´@_2.ý¬/Ý.y...RÎé÷.×An.íTý¯ÿo.£.<ß¼..¬Yna=¥.ì,æ¢,.ü.ò$àÀfk^î|t. ..¡cYd¡.X.P.;×"åÎ.m..¸±'..D/.nlûÇ..².©i.ÒY¸üp.].X¶YI.ÖËöu.°^.e.r.
 ].Ê±Wéò¤.@S.Ê¾öæ6.Ë Ù.ôÆÖ..×X&ìc?Ù.wRÎ[÷Ð^Öõ±ÝßI1..<wR7Æ..®$hÞ ..
 ```
-yeah this doesn't look good, but I didn't lose hope and checked if this is a file, so I downloaded the data and fortunately it is one, a gz compressed data file in fact:
+...yeah this doesn't look good, but without losing hope and checked if this is a file, so I downloaded the data and fortunately it is one, a gz compressed data file in fact:
 
 [link to file](assets//files//Spentalkux.gz)
 
-In this file we got another decoded/decrpyted data (I really lost count of how many where in this challenge by now), the data consists only of 1 and 0 so most of time it is one of three things - binary data, morse code or bacon code, so I first checked if it's binary and got another block of binary data, decoding it we get data which looks like hex and decoding that we get...weird random-looking data, so it is obviously base85 encoded, so I base85 decoded the data and finally after too many decrpytings and decodings we got the flag:
+In this file we got another decoded/decrpyted data (I really lost count of how many were in this challenge by now), the data consists only of 1 and 0 so most of the time it is one of three things - binary data, morse code or bacon code, so I first checked if it's binary and got another block of binary data, decoding it we get data which looks like hex and decoding that we get...weird random-looking data, so it is obviously base85 encoded, so I base85 decoded the data and finally after too many decrpytings and decodings we got the flag:
 
 ![](assets//images//spentalkux_3.png)
 
@@ -154,13 +154,13 @@ pearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearl
 
 ![](assets//images//pearl_pearl_pearl_2.png)
 
-When I started this challenge I immidiatly noticed the similarities it has with a challenge in AngstromCTF 2020 called clam clam clam, in it, a massage was hidden by using a carriage return symbol so when you are connected to the server and the output is printed to the terminal you can't see the message as the symbols makes the terminal overwrite the data in the line, but if you check the actual data printed by the server you can see the message.
+When I started this challenge I immidiatly noticed the similarities it has with a challenge in AngstromCTF 2020 called clam clam clam, in it, a massage was hidden by using a carriage return symbol so when you are connected to the server and the output is printed to the terminal you can't see the message as the symbol makes the terminal overwrite the data in the line, but if you check the actual data printed by the server you can see the message.
 So, I wrote a short script which connects to the server, reads the data and prints it to the screen without special symbols taking effect (and most importantly carriage return), but it didnt work, it's seems that even though there are a lot of carriage return symbols in the data there aren't any hidden messages.
 Then I started thinking about data representation, it seemed that there are a lot of carriage returns without the need of them, even sometimes one after the other, but always after a series of carriage returns there is a new line symbol:
 
 ![](assets//images//pearl_pearl_pearl_1.png)
 
-and then it hit me, what if the new line symbol and carriage return symbol reprensts 0 and 1?
+and then it hit me, what if the new line symbol and carriage return symbol reprenst 0 and 1?
 With that in mind, I wrote a short script which creates a empty string, reads until an end of a false flag and check if the symbol afterwards is new line or carriage return and append 0 or 1 to the string accordinaly, in the end it encodes the binary string to ascii characters and prints them:
 ```python 3
 from pwn import remote
@@ -196,7 +196,7 @@ We found a strange file knocking around, but I've got no idea who wrote it becau
 **ractf{R34d1ngBetw33nChar4ct3r5}**
 
 **Solution:** This one I actually figured out while writing the writeup for the previous challenge (who said writing writeups is useless), the challenges are very simillar in the way that the data is represented, but this one in my opinion is much trickier.
-When I first viewed the file I noticed the strange indentations all over the place, if we open the file in Notepad++ we can set the editor to let us view special characters such as tab and space:
+When I first viewed the file I noticed the strange indentations all over the place, if we open the file in Notepad++ we can set the editor to let us view special characters such as tabs and spaces:
 
 ![](assets//images//reading_beetwen_the_lines_1.png)
 
@@ -347,6 +347,7 @@ And a server to connect which runs the same script with the flag uncensored:
 ![](assets//images//teleport_1.png)
 
 This is the last challenge I solved in the misc. category and admittedly the challenge I spent most of my time on in the CTF.\
+We can assume by the script that we need to get to the specified position to get the flag, also we can assume that the script is written in python 3 so the input function does not evaluate the data given to it and regards it as a string.\
 When I first started working on it I tried writing a script which connect to the server and moves the player to the needed position, I quickly found out that there is a for loop with a range limited enough that you can't just move the player to that position 10 meters at a time. Then I tried looking for ways to make the script evaluate commands so that I can change the value of the player position or read the file from outside but those didn't work, after a while of trying everything I can and literally slamming my hands on the keyboard hoping something will work I noticed that in python 3 the input function return the string given simillar to how raw_input works in python 2, so the float function in the code gets a string as an input and returns a float value but how does it work, and more importantly which strings does it accepts and how they are parsed, after a google search I found in a stackoverflow question (linked below) the following table:
 
 ```
@@ -386,7 +387,7 @@ u'四'                 False        Japanese '4' is not a float.
 "-+1"                 False        Make up your mind
 "(1)"                 False        Parenthesis is bad
 ```
-which tells us that we can give as an argument the string "NaN" and the function will return the value nan.\
+this tells us that we can give as an argument the string "NaN" and the function will return the value nan.\
 nan, which stands for not a number, is used in floating point arithmetic to specify that the value is undefined or unrepresentable (such with the case of zero divided by zero), this value is great for us because any arithmetic operation done on nan will result with the value of nan, and for any value x the comperison nan > x is alway false, so if we give as inputs NaN to the script we will get that the value of the variable dist is nan and so the comparison of dist > 10 will be always false and our values of x and z will be assigned with nan, in the next round we can simply give the server any value we want and because x and z are nan we will still get that dist is nan, when we try this on the server we get the following:
 
 ![](assets//images//teleport_2.png)
