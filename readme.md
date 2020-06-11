@@ -85,15 +85,15 @@ for i in go_away_msgs:
     print(i)
 time.sleep(0.5)
 ```
-I think I needed to import the package and run it but oh well we still got the message, so we are given another unreadable text which which we can assume is a ciphertext with a key of length 10 as the messages suggested, we can infer by the ciphertext that it's a Vigenere cipher beacuse the format of the text and the format of the url in the end suggests that the letters were substituted (and it is common to use Vigenere in CTF so it's an easy assumption), I first attempted to decrypt the url using Cyberchef with the assumption that it's starts with https and got the substring of the key 'ental', and after a bit of trying to get other parts of the url decrpyted I noticed that the key is similar to the name of the package, so I used that as a key et voila:
+I think I needed to import the package to a script and run it but oh well we still got the message, so we are given another unreadable text  which we can assume is a ciphertext with a key of length 10 as the messages suggested, we can infer by the ciphertext that it's a Vigenere cipher beacuse the format of the text and the format of the url in the end suggests that the letters were substituted (and it is common to use Vigenere in CTF so it's an easy assumption), I first attempted to decrypt the url using Cyberchef with the assumption that it's starts with https and got the substring of the key 'ental', and after a bit of trying to get other parts of the url decrpyted I noticed that the key is similar to the name of the package, so I used that as a key et voila:
 ```
 Hello, If you're reading this you've managed to find my little... *interface*. The next stage of the challenge is over at https://pastebin.com/raw/BCiT0sp6
 ```
-We got ourself the decrpyted message. In the messege is a url to some data hosted on pastebin, if you look at the site you'll see that the data consists of numbers from 1 to 9 and some uppercase letters, only from A to F (I will not show it here beacuse it's massive), I assumed that it was an hex encoding of something and by the sheer size of it I infered that it is also a file, so I used an hex editor and created a new file with the hex value given which turns out to be an png image file (you can check things like that using the file command in linux), the image is:
+We got ourself the decrpyted message.\ In the messege is a url to some data hosted on pastebin, if you look at the site you'll see that the data consists of numbers from 1 to 9 and some uppercase letters, only from A to F (I will not show it here beacuse it's massive), I assumed that it was an hex encoding of something and by the sheer size of it I inferred that it's also a file, so I used an hex editor and created a new file with the data and it turns out to be an png image file (you can check things like that using the file command in linux), the image is:
 
 ![](assets//images//spentalkux_2.png)
 
-So we need to look back into the past... maybe there was an earlier version of this package (btw the binary below is decoded to _herring which I have no clue what it means), when we check the release history of the spentalkux package in pypi.org we can see that there is a 0.9 version of it, so I downloaded this package and again looked at the \_\_init\_\_.py file, it contains the following code:
+So we need to look back into the past... maybe there is an earlier version of this package (btw the binary below is decoded to _herring which I have no clue what it means), when we check the release history of the spentalkux package in pypi.org we can see that there is a 0.9 version of it, so I downloaded this package and again looked at the \_\_init\_\_.py file, it contains the following code:
 ```python
 import base64
 p="""
@@ -126,7 +126,7 @@ for i in go_away_msgs:
 time.sleep(0.5)
 ```
 
-And we got another decrypted/decoded code... we can see that it consists only of letters and numbers, in the hope that this isn't some ciphertext I tried using base32 as it only has letters and numbers (and too many letters to be hexadecimal), by doing so we get another code which consists of letters, numbers and symbols so we can safely assume that this is base64...
+And we got another decrypted/decoded code... we can see that it consists only of letters and numbers, in the hope that this isn't some ciphertext I tried using base32 as it only has letters and numbers (and too many letters to be hexadecimal), by doing so we get another code which consists of letters, numbers and symbols so we can safely assume that this is base64, and decoding the data from base64 we get...
 
 ```
 .....=.^.ÿíYQ.. .¼JGÐû_ÎÝþÌ´@_2.ý¬/Ý.y...RÎé÷.×An.íTý¯ÿo.£.<ß¼..¬Yna=¥.ì,æ¢,.ü.ò$àÀfk^î|t. ..¡cYd¡.X.P.;×"åÎ.m..¸±'..D/.nlûÇ..².©i.ÒY¸üp.].X¶YI.ÖËöu.°^.e.r.
@@ -136,7 +136,7 @@ yeah this doesn't look good, but I didn't lose hope and checked if this is a fil
 
 [link to file](assets//files//Spentalkux.gz)
 
-In this file we got another decoded/decrpyted data (I really lost count of how many where in this challenge by now), the data consists only of 1 and 0 so most of time it is one of three things - binary data, morse code or bacon code, so I first checked if it's binary and got another block of binary data, decoding it we get data which looks like hex and decoding that we get...weird random looking data, so it is obviously base85 encoded, so I base85 decoded the data and finally after too many decrpytings and decodings we got our flag:
+In this file we got another decoded/decrpyted data (I really lost count of how many where in this challenge by now), the data consists only of 1 and 0 so most of time it is one of three things - binary data, morse code or bacon code, so I first checked if it's binary and got another block of binary data, decoding it we get data which looks like hex and decoding that we get...weird random-looking data, so it is obviously base85 encoded, so I base85 decoded the data and finally after too many decrpytings and decodings we got the flag:
 
 ![](assets//images//spentalkux_3.png)
 
@@ -154,14 +154,14 @@ pearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearlpearl
 
 ![](assets//images//pearl_pearl_pearl_2.png)
 
-When I started this challenge I immidiatly noticed the similarities it has with a challenge in AngstromCTF 2020 called clam clam clam, in it, a massage was hidden by using a carriage return symbol so when you are connected to the server and the output is printed to the terminal you can't see the message because the symbols makes the terminal overwrite the data in the line, but if you check the actual data printed by the server you will see the message.
-So, I wrote a short script which connects to the terminal, reads the data given and prints it to the screen without using special symbols (and most importantly carriage return), but it didnt work, it's seems that even though there are a lot of carriage return symbols in the data there aren't any hidden messages.
+When I started this challenge I immidiatly noticed the similarities it has with a challenge in AngstromCTF 2020 called clam clam clam, in it, a massage was hidden by using a carriage return symbol so when you are connected to the server and the output is printed to the terminal you can't see the message as the symbols makes the terminal overwrite the data in the line, but if you check the actual data printed by the server you can see the message.
+So, I wrote a short script which connects to the server, reads the data and prints it to the screen without special symbols taking effect (and most importantly carriage return), but it didnt work, it's seems that even though there are a lot of carriage return symbols in the data there aren't any hidden messages.
 Then I started thinking about data representation, it seemed that there are a lot of carriage returns without the need of them, even sometimes one after the other, but always after a series of carriage returns there is a new line symbol:
 
 ![](assets//images//pearl_pearl_pearl_1.png)
 
 and then it hit me, what if the new line symbol and carriage return symbol reprensts 0 and 1?
-With that in mind, I wrote a short script which creates a string, reads until an end of a false flag and check if the symbol afterwards is new line or carriage return and append 0 or 1 to the string accordinaly, in the end it encode the binary string to ascii characters and prints them:
+With that in mind, I wrote a short script which creates a empty string, reads until an end of a false flag and check if the symbol afterwards is new line or carriage return and append 0 or 1 to the string accordinaly, in the end it encodes the binary string to ascii characters and prints them:
 ```python 3
 from pwn import remote
 import binascii
@@ -195,12 +195,12 @@ We found a strange file knocking around, but I've got no idea who wrote it becau
 
 **ractf{R34d1ngBetw33nChar4ct3r5}**
 
-**Solution:** This one I actually figured out while writing the previous challenge (who said writing writeups is useless), the challenges are really simillar in the way that the data is represented, but this one in my opinion is much trickier.
-When I viewed the file I noticed the strange indentations all over the place, if we open the file in Notepad++ we can set the editor to let us view special characters such as tab and space:
+**Solution:** This one I actually figured out while writing the writeup for the previous challenge (who said writing writeups is useless), the challenges are very simillar in the way that the data is represented, but this one in my opinion is much trickier.
+When I first viewed the file I noticed the strange indentations all over the place, if we open the file in Notepad++ we can set the editor to let us view special characters such as tab and space:
 
 ![](assets//images//reading_beetwen_the_lines_1.png)
 
-First I didn't think much of them, then I tried transforming them to morse code in the same way I showed in the previous challenge to no avail (I guess I tried it first because the editor represents the symbols in a similar fashion) but actually the hidden data transcribed by the tab symbol and the space symbol is binary when the space symbol reprensts 0 and the tab symbol represents 1, when I first tried decoding the data I did it manually but got frustated really quick so I wrote a really short script that reads the code and just filter out of the way all the characters except the space symbol and tab symbol, decodes them to binary like I described and from that to an ascii encoded string:
+I didn't think much of them at the start, then I tried transforming them to morse code in the same way I showed in the previous challenge to no avail (I guess I tried it first because the editor represents the symbols in a similar fashion) but actually the hidden data transcribed by the tab symbol and the space symbol is binary when the space symbol reprensts 0 and the tab symbol represents 1, so I wrote a really short script that reads the code and just filter out of the way all the characters except the space symbol and tab symbol, decodes them to binary in the way I described and from that to an ascii encoded string:
 
 ```python 3
 import re
@@ -219,7 +219,7 @@ and we got the flag:
 
 
 ## Mad CTF Disease
-Todo:
+Todo:\
 [x] Be a cow\
 [x] Eat grass\
 [x] Eat grass\
@@ -387,7 +387,7 @@ u'四'                 False        Japanese '4' is not a float.
 "(1)"                 False        Parenthesis is bad
 ```
 which tells us that we can give as an argument the string "NaN" and the function will return the value nan.\
-nan, which stands for not a number, is used in floating point arithmetic to specify that the value is undefined or unrepresentable (such with the case of zero divided by zero), this value is great for us because any arithmetic operation done on nan will results with the value of nan, and for any value x the comperison nan > x is alway false, so if we give as inputs NaN to the script will get that the value of the variable dist is nan and so the comparison of dist > 10 will be always false and our values of x and z will be assigned with nan, in the next round we can simply give the server any value we want and because x and z are nan we will still get that dist is nan, when we try this on the server we get the following:
+nan, which stands for not a number, is used in floating point arithmetic to specify that the value is undefined or unrepresentable (such with the case of zero divided by zero), this value is great for us because any arithmetic operation done on nan will result with the value of nan, and for any value x the comperison nan > x is alway false, so if we give as inputs NaN to the script we will get that the value of the variable dist is nan and so the comparison of dist > 10 will be always false and our values of x and z will be assigned with nan, in the next round we can simply give the server any value we want and because x and z are nan we will still get that dist is nan, when we try this on the server we get the following:
 
 ![](assets//images//teleport_2.png)
 
@@ -453,7 +453,7 @@ Connect to the network service to get the flag.
 
 ![](assets//images//really_small_algorithm_1.png)
 
-in the last challenge I tried to explain how RSA works, this time I will try (and hopefully won't fail misearably) to exalain why RSA works, for that we need to talk about factors, factors are numbers which can be divided only by 1 and themself (we are talking about whole numbers), we have discovered that there are infinitly many factors and that we can represent any number as the multiplication of factors, but, we havent found an efficient way to found out which factors make up a number, and some will even argue that there isn't an efficient way to do that (P vs. NP and all that fiasco), which means that if we take a big number, it will take days, months and even years to find out the factors which makes him, but, we have discovered efficient ways to find factors, so if I find 2 factors, which are favorably big, I multiply them and post the multiplication of them on my feed to the public, it will take a lot of time for people to discover the factors that make up my number. But, and a big but, if they have a database of numbers and the factors that make them up they can easily find the factors for each numbers I will post, and as I explained before, if we can the factors we can easily calculate phi and consequently calculate d, the private key of RSA, and break the cipher, right now there are databases (listed below) with all the numbers up to 60 digits (if I remember correctly), which is a lot but not enough to break modern RSA encryptions, but if we look at the challenge's parameters, we can see that n is awefully small, small enough that it most be in some databases, for that challenge I used factordb.com to search for factors:
+in the last challenge I tried to explain how RSA works, this time I will try (and hopefully won't fail misearably) to exalain why RSA works, for that we need to talk about factors, factors are numbers which can be divided only by 1 and themself (we are only talking about whole numbers), we have discovered that there are infinitly many factors and that we can represent any number as the multiplication of factors, but, we havent discovered an efficient way to find out which factors make up a number, and some will even argue that there isn't an efficient way to do that (P vs. NP and all that), which means that if we take a big number, it will take days, months and even years to find out the factors which makes it, but, we have discovered efficient ways to find factors, so if I find 2 factors, which are favorably big, I multiply them and post the result on my feed to the public, it will take a lot of time for people to discover the factors that make up my number. But, and a big but, if they have a database of numbers and the factors that make them up they can easily find the factors for each numbers I will post, and as I explained before, if we can the factors we can easily calculate phi and consequently calculate d, the private key of RSA, and break the cipher, right now there are databases (listed below) with have the factors to all the numbers up to 60 digits (if I remember correctly), which is a lot but not enough to break modern RSA encryptions, but if we look at the challenge's parameters, we can see that n is awefully small, small enough that it most be in some databases, for that challenge I used factordb.com to search for factors:
 
 ![](assets//images//really_small_algorithm_2.png)
 
@@ -495,7 +495,7 @@ Connect to the network service to get the flag. The included template script may
 
 ![](assets//images//really_speedy_algorithm_1.png)
 
-so we have another RSA challenge (make sense by the title), in the previous two challenges I covered how RSA works and why it works, and we've seen some of the attributes that the parameters of RSA have, now it's time to test our skills, the server gives as some simple simple challenges such as finding n with q,p given, and some harder challenges like decrypting a ct with q,p and e given. luckily there arent any challenges like the previous one which tasks us with finding primes (there is a package to do that but I think it will not work with the time limit at hand), so for that I wrote the following script which reads the given parameters and the objective, performs the steps needed and send the response back to server, for me the connection to the server was spotty so I added a dirty try-catch mechanic so that the script will retry until some string with the format of the flag will be given by the server (I didn't use the tamplate):
+so we have another RSA challenge (makes sense by the title), in the previous two challenges I covered how RSA works and why it works, and we've seen some of the attributes that the parameters of RSA have and the connections beetwen them, now it's time to test our skills, the server gives as some simple simple challenges such as finding n with q,p given, and some harder challenges like decrypting a ct with q,p and e given. luckily there arent any challenges like the previous one which tasks us with finding primes (there is a package to do that but I think it will not work with the time limit at hand), so for that I wrote the following script which reads the given parameters and the objective, performs the steps needed and send the response back to server, for me the connection to the server was a bit spotty so I added a dirty try-catch statement so that the script will retry until some string with the format of the flag will be given by the server (I didn't use the tamplate):
 ```python 3
 from pwn import *
 from Crypto.Util.number import inverse
@@ -559,7 +559,7 @@ host = '88.198.219.20'
 port = 23125
 connect()
 ```
-as you can see all the challenges are like we've seen in previous challenges, I used pwntools' remote module instead of sockets as was recommended by the CTF teams beacuse I am more accustomed to it, by running the code we get:
+as you can see all the challenges are like we've seen in previous challenges, I prefered to use pwntools' remote module instead of sockets as was recommended by the CTF team beacuse I'm more accustomed to it, by running the code we get:
 
 ![](assets//images//really_speedy_algorithm_2.png)
 
@@ -575,7 +575,7 @@ While doing a pentest of a company called MEGACORP's network, you find these num
 
 ![](assets//images//booring_crypto.png)
 
-I played for a while with the encryption and noticed three things, the first is that the ciphertext, which consists of 4 \* n numbers where n is the number of letters in the cipher text, changes even though the plaintext remains the same, which means that the specific numbers returned are of no importance to the decryption. The second thing and the most important thing is that the *sum* of the numbers is constant for every plaintext given, and when the message consists of one letter letter only the sum is equal to 255 minus the ascii order of the character, or equivalently the inverse of the order of the character in binary. The third thing is that appending two messeges results with a ciphertext twice the size, where the sum remains consistent with the previous attribue I mentioned, an example of this:
+I played for a while with the encryption and noticed three things, the first is that the ciphertext, which consists of 4 \* n numbers where n is the number of letters in the cipher text, changes even though the plaintext remains the same, which means that the specific numbers returned are of no importance to the decryption. The second thing and the most important thing is that the *sum* of the numbers is constant for every plaintext given, and when the message consists of one letter letter only the sum is equal to 255 minus the ascii order of the character, or equivalently the inverse of the order of the character in binary. The third thing is that appending two messeges results with a ciphertext twice the size, where the sum remains consistent with the previous attributes I mentioned, an example of this:
 
 ![](assets//images//booring_crypto_1.png)
 
@@ -607,11 +607,11 @@ This image refuses to open in anything, which is a bit odd. Open it for the flag
 
 **ractf{1m4ge_t4mp3r1ng_ftw}**
 
-**Solution:** With the challenge we are given a PNG image data which seems to be corrupted because it seems we can't view it, so we need to find a way to fix the image. Fortunately, the format of PNG image is quite easy to understand, the file mostly consists of the png file signature, the first 8 bytes of the file which are the same across all PNG images and  are used to detect the file as an PNG image, an IHDR chunk which specify the dimension of the image and a few other things, a lot of IDAT chunks which contains the actual compressed image data and in the end an IEND chunk which specify the end of the image, each chunks starts with the chunk size and end with the chunk crc32 code which helps detect data corruption in the chunk (we'll get to that next challenge), now if we look at the given image with an hex editor (I used HxD) we see the following:
+**Solution:** With the challenge we are given a PNG image data which seems to be corrupted because we can't view it, so we need to find a way to fix the image. Fortunately, the format of PNG image data is quite easy to understand, this type of files mostly consists of the png file signature, which are the first 8 bytes of the file same across all PNG images used for detecting that the file is a PNG image, an IHDR chunk which specify the dimension of the image and a few other things, a lot of IDAT chunks which contains the actual compressed image data and in the end an IEND chunk which specify the end of the image, each chunks starts with the chunk size and end with the chunk crc32 code which helps detect data corruption in the chunk (we'll get to that next challenge), now if we look at the given image with an hex editor (I used HxD) we see the following:
 
 ![](assets//images//cut_short_1.png)
 
-We can see that there is an IEND chunk at the start of the image right after the file signature, which is wrong and makes image viewers neglect all the preceeding data after it, so we can delete this chunk, it starts in the eighth byte and ends in the 19th byte, after deleting this chunk we can try viewing and the image again, by doing that we get:
+We can see that there is an IEND chunk at the start of the image right after the file signature, which is wrong and makes image viewers neglect all the preceeding data, so we can delete this chunk, it starts in the eighth byte and ends in the 19th byte, after deleting this chunk we can try viewing the image again, by doing that we get:
 
 <p align="center">
   <img src="assets//images//cut_short_2.png">
@@ -632,16 +632,16 @@ This PNG looks to be valid, but when we open it up nothing loads. Any ideas?
 
 [flag.png](https://files.ractf.co.uk/challenges/72/flag.png)
 
-**Solution:** With get a PNG image with the challenge, and again it seems we can view it, so it is too corrupted, if we view the file in hex editor we see the following
+**Solution:** We once again get a PNG image with the challenge, and again it seems we can view it, so it is too corrupted, if we view the file in hex editor we see the following
 
 ![](assets//images//dimension_loading_1.png)
 
- I explained in the previous challenge the PNG image layout, whats important in our case is the IHDR chunk, this chunk is the first to appear in a file right after the file signature and specify the dimension of the image and other metadata the image viewers can use to show the image, in the specification of the PNG file format we can see:
+ I explained in the previous challenge the PNG image layout, whats important in our case is the IHDR chunk, this chunk is the first to appear in a PNG file right after the file signature and specify the dimension of the image and other metadata the image viewers can use to show the image, in the specification of the PNG file format we can see:
 
  ![](assets//images//dimension_loading_2.png)
 
- so we can infer that the width and height of the image are four bytes each an are the first attributes in the chunk, if we look again at the hexdump of the file we can see that this bytes are equal to zero, alternativly, we can use the tool pngcheck on linux and it will return as that the image dimension are invalid with them being 0x0, so we now know our problem but how we can fix it? unfortunatly the image width and height is only stored in the IHDR chunk, so wi'll need to brute force our way, for that we need to talk about crc some more.\
- As I explained in the previous challenge each chunk is preceeded by a crc code which check the integrity of the chunk, the algorithm itself for calculating the code, which is called Cyclic redundancy check, is not important at the moment but we should keep in mind that it does its job quite well, and that we have a python module zlib implements it, so if we iterate over all the reasonable dimensions for the image, calculate the crc code for the chunk again and compare it to the code stored in the image, which in our case we can see in the hexdump that it is 0x5b8af030, we can hopefully find the correct dimension for the image, so I wrote the following script which roughly does what I described and prints the dimensions that match:
+ so we can infer that the width and height of the image are four bytes each an are the first attributes in the chunk, if we look again at the hexdump of the file we can see that this bytes are equal to zero, so the dimensions of the image are zero. Alternativly, we can use the tool pngcheck on linux and it will return that the image dimension are invalid, with them being 0x0, so we now know our problem but how we can fix it? unfortunatly the image width and height are only stored in the IHDR chunk, so we'll need to brute force our way, for that we need to talk about crc some more.\
+ As I explained in the previous challenge each chunk is preceeded by a crc code which check the integrity of the chunk, the algorithm itself for calculating the code, which is called Cyclic redundancy check, is not important at the moment but we should keep in mind that it does its job very well, and that we have a python module zlib implements it, so if we iterate over all the reasonable dimensions for the image, calculate the crc code for the chunk again and compare it to the code stored in the image, which in our case we can see in the hexdump that it is 0x5b8af030, we can hopefully find the correct dimension for the image, so I wrote the following script which roughly does what I described and prints the dimensions that match:
 
  ``` python 3
  from zlib import crc32
@@ -666,19 +666,19 @@ This PNG looks to be valid, but when we open it up nothing loads. Any ideas?
  	for i in range(len(width)):
  			ihdr[width_index - i] = bytearray(b'\x00')[0]
  ```
- most of the code is just to because using bytearrays is difficult, running it will give us the following:
+ most of the code is just handling with bytearrays, running it will give us the following:
 
  ![](assets//images//dimension_loading_3.png)
 
-we can see that the script found only one match, which is great because the only thing left for us to do is replace the dimension in the image with this dimension and we hopefully done, the hexdump should look now like that (different in the second row):
+we can see that the script found only one match, which is great because the only thing left for us to do is replace the dimension in the image with this dimension and we hopefully done, the hexdump should look now like this (different in the second row):
 
 ![](assets//images//dimension_loading_4.png)
 
-By trying to view the image again we get:
+and by trying to view the image again we get:
 
 ![](assets//images//dimension_loading_5.png)
 
-and we got our flag.
+and we got the flag.
 
 **Resources:**
 * PNG format specification (long version): https://www.w3.org/TR/2003/REC-PNG-20031110/
