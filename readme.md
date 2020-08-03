@@ -226,14 +226,14 @@ Todo:\
 [x] Eat grass\
 [ ] Find the flag
 
-[cow.jpg](https://files.ractf.co.uk/challenges/60/cow.jpg)
+[cow.jpg](assets//images//mad_CTF_disease.jpg)
 
 **ractf{exp3rt-mo0neuv3r5}**
 
 **Solution:** Now to change things up we got ourselves a stego-but-not-in-stego type of challenge, with the challenge we get this nice JPEG image data file:
 
 <p align="center">
-  <img src="https://files.ractf.co.uk/challenges/60/cow.jpg">
+  <img src="assets//images//mad_CTF_disease.jpg">
 </p>
 
 First thing I do when faced with images is to check using binwalk if there are any embedded files in the images, as expected binwalk finds nothing in this image, afterwards I check using steghide also for embedded files, It supposed to do a better job but I mostly use it by habit because binwalk almost always finds the same files and...
